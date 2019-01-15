@@ -9,7 +9,7 @@ function showLog(msg){
 function unlock(){
     //light up the screen and then input the passd to unlock the device;
     if(!device.isScreenOn()){
-        device.wakeUp();
+        device.wakeUp(); //唤醒手机屏幕并输入密码。可以打开开发者模式，设置显示指针即可知道对应的点。
         sleep(500); //must have a sleep() operation.
         swipe(500,1900,500,100,200);
         sleep(200);
@@ -147,6 +147,7 @@ function mainApp(){
 function captureImg(){
     requestScreenCapture();  //发起截图请求。
     path="/storage/emulated/0/Tencent/TIMfile_recv/AntHand.jpg";
+    //这是可收集那个 手  的图片的路径。图片需要结合自己的收集分辨率进行截图。
     var img1=captureScreen();
     var img2=images.read(path);
     var p=images.findImage(img1,img2);
