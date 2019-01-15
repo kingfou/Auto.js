@@ -1,0 +1,183 @@
+
+mainApp();
+
+
+function showLog(msg){
+    toast(msg);
+    console.log(msg);
+}
+function unlock(){
+    //light up the screen and then input the passd to unlock the device;
+    if(!device.isScreenOn()){
+        device.wakeUp();
+        sleep(500); //must have a sleep() operation.
+        swipe(500,1900,500,100,200);
+        sleep(200);
+    
+        click(540,1400);
+        sleep(100);
+    
+        click(240,1400);
+        sleep(100);
+    
+        click(840,1400);
+        sleep(100);
+    
+        click(540,1800);
+        sleep(100);
+    }
+}
+function enterMyMainPage(){
+    sleep(200);
+    isOpen=launchApp("支付宝");
+    if(isOpen){
+        showLog("wait for the app to launch...");
+    sleep(1000);
+    click(180,1650); // 应用双开的时候开启第一个app.
+    sleep(1000);
+    
+    antree=text("蚂蚁森林").findOne();
+    anttreeParent=antree.parent().parent();
+    if(anttreeParent){
+        anttreeParent.click();
+        sleep(500);
+    }
+    }
+    
+}
+
+
+
+function collectOtherEnergy(){
+    sleep(200);
+    descStartsWith("收集能量").find().forEach(function(pos){
+        var posb=pos.bounds();//获取实际的坐标
+        sleep(200);
+        click(posb.centerX()+10,posb.centerY()-25); //进行点击
+        sleep(500);
+    })
+    sleep(500);
+    descStartsWith("收集能量").find().forEach(function(pos){
+        var posb=pos.bounds();//获取实际的坐标
+        sleep(200);
+        click(posb.centerX()+10,posb.centerY()-25); //进行点击
+        sleep(500);
+    })
+
+    
+
+    // gesture(1000,[886,2260],[886,1800]);
+    back();
+    sleep(500);
+}
+
+function collectMyEnergy(){
+    sleep(200);
+    descStartsWith("收集能量").find().forEach(function(pos){
+        var posb=pos.bounds();//获取实际的坐标
+        sleep(200);
+        click(posb.centerX()+10,posb.centerY()-25); //进行点击
+        sleep(500);
+    })
+    sleep(500);
+    descStartsWith("收集能量").find().forEach(function(pos){
+        var posb=pos.bounds();//获取实际的坐标
+        sleep(200);
+        click(posb.centerX()+10,posb.centerY()-25); //进行点击
+        sleep(500);
+    })
+
+    
+
+}
+
+function friendSList(){
+    showLog("enter other friends");
+    gesture(1000,[500,2020],[500,800]);
+    sleep(300);
+    gesture(1000,[500,2020],[500,800]);
+    sleep(300);
+    gesture(1000,[500,2020],[500,800]);
+    sleep(300);
+
+    //more friends frame;
+
+    desc("查看更多好友").findOne().click();
+    sleep(1000);
+}
+
+function fetchAllEnergy(){
+    gesture(500,[500,1820],[500,1400]);
+    var index=4;
+    while(index<59){
+        thechild=desc(String(index)).findOne();
+        theparent=thechild.parent();
+        if(theparent.child(2).desc()=="林金福的福"){
+            toast("林金福的福");
+            index+=1;
+            continue;
+        }
+        pos=thechild.bounds();
+        click(pos.centerX()+100,pos.centerY());
+        sleep(1000);
+        collectOtherEnergy();
+        index+=1;
+        gesture(200,[500,1800],[500,1600]);  //下拉显示新的名单。
+
+    }
+    
+}
+
+function mainApp(){
+    unlock();
+    enterMyMainPage();
+    collectMyEnergy();
+    friendSList();
+    sealEnergyByHandIcon();
+    back();
+    sleep(200);
+    back();
+    sleep(200);
+    home();
+    exit();
+}
+
+
+
+function captureImg(){
+    requestScreenCapture();  //发起截图请求。
+    path="/storage/emulated/0/Tencent/TIMfile_recv/AntHand.jpg";
+    var img1=captureScreen();
+    var img2=images.read(path);
+    var p=images.findImage(img1,img2);
+    //permissioin may from the file directry and other prefunction()
+    toast(p);
+    //click(p.x+7,p.y+7);
+    sleep(100);
+    //such as the function requestScreenCapture();
+}
+
+
+function sealEnergyByHandIcon(){
+    //use the hand icon to identify if the energy is finished or not?
+    requestScreenCapture();
+    path="/storage/emulated/0/Tencent/TIMfile_recv/AntHand.jpg";
+    var handIcon=images.read(path); 
+    var isExists=1; 
+    while(true){
+        isExists=images.findImage(captureScreen(),handIcon);
+        if(desc("没有更多了").exists()&&isExists==null){
+            back();
+            break;
+        }else if(isExists==null){
+            gesture(1000,[500,2000],[500,300]);
+        }else{
+            click(isExists.x+7,isExists.y+7);
+            sleep(1000);
+            collectOtherEnergy();
+            sleep(1000);
+        }  
+        
+    }
+    back();  
+}
